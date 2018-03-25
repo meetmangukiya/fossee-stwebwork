@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Statistics</title>
+        <script src='https://cdn.jsdelivr.net/npm/moment@2.21.0/min/moment.min.js'></script>
+    </head>
+
+    <body>
+        <style>
+        table, tr, th, td {
+            border-style: solid;
+            border-collapse: collapse;
+        }
+        </style>
+
+
+        <form name='search_params'>
+            <input type='text' name='username' placeholder='Username'>
+            <label for='payment'>Payment: </label>
+            <input type='checkbox' name='payment'>
+            <input type='date' name='start_date'>
+            <input type='date' name='end_date'>
+            <input type='submit' value='Show stats'>
+        </form>
+
+        {% for user, details in users.items %}
+        <strong>{{user.username}}</strong>
+            <table>
+                <tr>
+                    <th>Expected Submission Date</th>
+                    <th>Actual Submission Date</th>
+                    <th>Is published?</th>
+                    {% if show_payment %}
+                    <th>Payment</th>
+                    {% endif %}
+                </tr>
+
+                {% for tutorial in details.tutorials %}
+                <tr>
+                    <td>{{tutorial.expected_submission_date}}</td>
+                    <td>{{tutorial.actual_submission_date}}</td>
+                    <td>{{tutorial.is_published}}</td>
+
+                    {% if show_payment %}
+                        {% if tutorial.is_published %}
+                        <td>{{PaymentModel.AMT}}</td>
+                        {% else %}
+                        <td>0</td>
+                        {% endif %}
+                    {% endif %}
+                </tr>
+                {% endfor %}
+
+                {% if show_payment %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{user.payment.total_amt}}</td>
+                </tr>
+                {% endif %}
+            </table>
+        {% endfor %}
+        <script>
+            document.search_params.end_date.valueAsDate = moment().toDate();
+            document.search_params.start_date.valueAsDate = moment()
+                .subtract(30, 'days')
+                .toDate();
+        </script>
+    </body>
+</html>
